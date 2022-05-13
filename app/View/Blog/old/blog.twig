@@ -4,7 +4,7 @@ TWIG
 Ваш номер ID # {{ user.getId() }}
 <br>
 <br>
-<form enctype="multipart/form-data" action="/posts/sendPost" method="post">
+<form enctype="multipart/form-data" action="/blog/sendPost" method="post">
     Message:<br>
     <textarea name="message" style="width: 250px; height: 100px;"></textarea><br>
     Прикрепить картинку:<br>
@@ -31,7 +31,7 @@ TWIG
     <div class="message">{{ val.texts }}</div>
 
     {% if user.getId() == ADMIN %}
-        <form method="post" action="/posts/deletePost">
+        <form method="post" action="/blog/deletePost">
         <input type='hidden' name='id' value="{{ fileId }}">
         <input type="submit" value="Удалить">
         </form>
@@ -41,7 +41,7 @@ TWIG
 </div>
 {%  endfor %}
 
-<form action="/posts/api" method="post">
+<form action="/blog/api" method="post">
     Введите ID юзера для просмотра его постов:<br>
     <input type="number" name="user_id_api"> <br>
 </form>
@@ -72,47 +72,8 @@ TWIG
 В JSON формате: {{ posts_user_id|json_encode() }}
 </pre>
 
-{% if user.getId() == ADMIN %}
-    Admin area
-    <form method="post" action="/user/register">
-        <input type='hidden' name='id' value="{{ fileId }}">
-        <input type="submit" value="Create new User">
-    </form>
 
-{% for userss, val in users %}
-
-<div class="post">
-<span class="user">User {{ val.name }}
-        	с ID_#      {{ val.id }}
-            c email     {{ val.email }}
-             {% set fileId=val.id %}
-
-
-              <form method="post" action="/user/updateUser" class="form-container">
-              <p>Редактирование записи # {{ val.id }}</p>
-
-              <input type='hidden' name='id' value="{{ val.id }}"><br>
-              <label for="name"><b>Name</b></label>
-              <input type="text" placeholder="{{ val.name }}" name="name" required><br>
-              <label for="email"><b>Email</b></label>
-              <input type="text" placeholder="{{ val.email }}" name="email" required><br>
-              <label for="password"><b>Пароль</b></label>
-              <input type="password" placeholder="Введите новый Пароль" name="password" required>
-
-              <button type="submit" class="btn">Изменить</button>
-          </form>
-
-        <form method="post" action="/user/deleteUser">
-        <input type='hidden' name='id' value="{{ fileId }}">
-        <input type="submit" value="Удалить">
-        </form>
-
-       {# <button class="open-button" onclick="openForm()">Изменить запись</button>#}
-
-</span>
-</div>
-{%  endfor %}
-{% endif %}
+<img src="/images/23.jpg"></img>
 
 <style>
     .post {

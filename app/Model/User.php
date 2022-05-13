@@ -4,18 +4,21 @@ namespace App\Model;
 
 use Base\AbstractModel;
 use Base\Db;
+use Illuminate\Database\Eloquent\Model;
 
 class User extends AbstractModel
 {
     const GENDER_FEMALE = 2;
     const GENDER_MALE = 1;
 
-    private $id;
-    private $name;
-    private $email;
-    private $password;
-    private $createdAt;
-    private $gender;
+    public $table = "users";
+
+    public $id;
+    public $name;
+    public $email;
+    public $password;
+    public $createdAt;
+    public $gender;
 
     public function __construct($data = [])
     {
@@ -147,6 +150,43 @@ class User extends AbstractModel
         return $id;
     }
 
+    public function delete()
+    {
+        $db = Db::getInstance();
+        $delete = "DELETE FROM users WHERE `id` = :id";
+        $db->exec($delete, __METHOD__, [
+            ':id' => $this->id,
+        ]);
+
+        $id = $db->lastInsertId();
+        $this->id = $id;
+
+        return $id;
+    }
+
+    public function updates($id,$name, $email, $password)
+    {
+        $this->id = $id;
+        $this->name = $name;
+        $this->email = $email;
+        $this->password = $password;
+
+        $db = Db::getInstance();
+        $insert = "UPDATE users SET name = '$name',email = '$email', password = '$password' WHERE id = '$id'";
+
+        $db->exec($insert, __METHOD__, [
+            ':name' => $this->name,
+            ':email' => $this->email,
+            ':password' => $this->password,
+            ':gender' => $this->getGender()
+        ]);
+
+        $id = $db->lastInsertId();
+        $this->id = $id;
+
+        return $id;
+    }
+
     public static function getById(int $id): ?self
     {
         $db = Db::getInstance();
@@ -178,6 +218,21 @@ class User extends AbstractModel
     public static function getPasswordHash(string $password)
     {
         return sha1(',.lskfjl' . $password);
+    }
+
+    public static function getAll()
+    {
+        $db = Db::getInstance();
+        $select = "SELECT * FROM users ORDER BY id DESC LIMIT 5;";
+        $data = $db->fetchAll($select, __METHOD__, [
+            ]
+        );
+
+        if (!$data) {
+            return null;
+        }
+
+        return $data;
     }
 
 }

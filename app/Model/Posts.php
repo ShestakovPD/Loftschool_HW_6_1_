@@ -5,12 +5,14 @@ namespace App\Model;
 use Base\AbstractModel;
 use Base\Db;
 
-class Blog extends AbstractModel
+class Posts extends AbstractModel
 {
+    protected $table = "posts";
+
     private $id;
     private $user_id;
     private $texts;
-    private $createdAt;
+  /*  private $createdAt;*/
 
     public function __construct($data = [])
     {
@@ -18,7 +20,7 @@ class Blog extends AbstractModel
             $this->id = $data['id'];
             $this->user_id = $data['user_id'];
             $this->texts = $data['texts'];
-            $this->createdAt = $data['created_at'];
+            /*$this->createdAt = $data['created_at'];*/
         }
     }
 
@@ -78,11 +80,11 @@ class Blog extends AbstractModel
     /**
      * @param mixed $createdAt
      */
-    public static function setCreatedAt(string $createdAt): self
+/*    public static function setCreatedAt(string $createdAt): self
     {
         $this->createdAt = $createdAt;
         return $this;
-    }
+    }*/
 
     public static function getAll()
     {
@@ -102,12 +104,12 @@ class Blog extends AbstractModel
     public function save()
     {
         $db = Db::getInstance();
-        $insert = "INSERT INTO posts (`user_id`, `texts`, `createdAt`) VALUES (
-            :user_id, :texts, :createdAt)";
+        $insert = "INSERT INTO posts (`user_id`, `texts`) VALUES (
+            :user_id, :texts)";
         $db->exec($insert, __METHOD__, [
             ':user_id' => $this->user_id,
-            ':texts' => $this->texts,
-            ':createdAt' => $this->createdAt
+            ':texts' => $this->texts
+            /*':createdAt' => $this->createdAt*/
         ]);
 
         $id = $db->lastInsertId();

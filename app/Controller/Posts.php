@@ -2,13 +2,13 @@
 
 namespace App\Controller;
 
-use App\Model\Blog as BlogModel;
+use App\Model\Posts as PostsModel;
 use App\Model\User as UserModel;
 use Base\AbstractController;
 use Base\Db;
 use Intervention\Image\ImageManagerStatic as Image;
 
-class Blog extends AbstractController
+class Posts extends AbstractController
 {
     public $posts;
     public $blogs;
@@ -17,31 +17,38 @@ class Blog extends AbstractController
 
     protected static $_imagePath;
 
+    public static function create_article ($text, $user_id) {
+        $arr = array(
+            "texts" => $texts,
+            'user_id' => $user_id
+        );
+        $post = Posts::create($arr);
+        return $posts;
+    }
+
     public function indexAction()
     {
         if (!$this->user) {
             $this->redirect('/user/register');
         }
 
-        return $this->view->render('Blog/index.phtml', [
+        return $this->view->render('Blog/index.twig', [
             'user' => $this->user
         ]);
     }
 
     public function allpostsAction()
     {
-
         if (!$this->user) {
             $this->redirect('/user/register');
         }
 
-        $this->posts = BlogModel::getAll();
-        $this->posts_name = BlogModel::getNamePostSender();
-
-      /*  var_dump( $this->posts_name);
-        die;*/
+        $this->users = UserModel::getAll();
+        $this->posts = PostsModel::getAll();
+        $this->posts_name = PostsModel::getNamePostSender();
 
         return $this->view->render('Blog/blog.twig', [
+            'users' => $this->users,
             'user' => $this->user,
             'posts' => $this->posts,
             'posts_name' => $this->posts_name,
@@ -64,7 +71,7 @@ class Blog extends AbstractController
             }
 
             if ($success) {
-                $blogs = (new BlogModel())->setUserId($user_id)->setText($message)->setCreatedAt($createdAt);
+                $blogs = (new PostsModel())->setUserId($user_id)->setText($message)/*->setCreatedAt($createdAt)*/;
 
                 $blogs->save();
 
@@ -75,11 +82,11 @@ class Blog extends AbstractController
                     file_put_contents('images/' . $sendPostUserId . '.png', $fileContent);
                 }
 
-                $this->redirect('/blog/index');
+                $this->redirect('/posts/index');
             }
         }
 
-        return $this->view->render('Blog/blog.phtml', [
+        return $this->view->render('Blog/blog.twig', [
             'user' => $this->user,
         ]);
     }
@@ -87,11 +94,11 @@ class Blog extends AbstractController
     public function deletePostAction()
     {
         $id = ($_POST['id']);
-        $blogs = (new BlogModel())->setId($id);
+        $blogs = (new PostsModel())->setId($id);
         $blogs->delete();
-        $this->redirect('/blog/index');
+        $this->redirect('/posts/index');
 
-        return $this->view->render('Blog/blog.phtml', [
+        return $this->view->render('Blog/blog.twig', [
             'user' => $this->user,
         ]);
     }
@@ -104,9 +111,9 @@ class Blog extends AbstractController
             $this->redirect('/user/register');
         }
 
-        $this->posts = BlogModel::getAll();
-        $this->posts_name = BlogModel::getNamePostSender();
-        $this->posts_user_id = BlogModel::getAllById($user_id_api);
+        $this->posts = PostsModel::getAll();
+        $this->posts_name = PostsModel::getNamePostSender();
+        $this->posts_user_id = PostsModel::getAllById($user_id_api);
 
         return $this->view->render('Blog/blog.twig', [
             'user' => $this->user,

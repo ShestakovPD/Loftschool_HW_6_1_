@@ -5,9 +5,14 @@ namespace App\Controller;
 use App\Model\User as UserModel;
 use Base\AbstractController;
 use Base\Db;
+use Base\View;
 
 class User extends AbstractController
 {
+    public $users;
+    public $user;
+    public $view;
+
     public function loginAction()
     {
         $name = trim($_POST['name']);
@@ -24,12 +29,12 @@ class User extends AbstractController
                     $this->view->assign('error', 'Неверный логин и пароль');
                 } else {
                     $_SESSION['id'] = $user->getId();
-                    $this->redirect('/blog/index');
+                    $this->redirect('/posts/index');
                 }
             }
         }
 
-        return $this->view->render('User/register.phtml', [
+        return $this->view->render('User/register.twig', [
             'user' => UserModel::getById((int)$_GET['id'])
         ]);
     }
@@ -80,16 +85,16 @@ class User extends AbstractController
                 $_SESSION['id'] = $user->getId();
                 $this->setUser($user);
 
-                $this->redirect('/blog/index');
+                $this->redirect('/posts/index');
             }
         }
-        return $this->view->render('User/register.phtml', [
+        return $this->view->render('User/register.twig', [
         ]);
     }
 
     public function profileAction()
     {
-        return $this->view->render('User/profile.phtml', [
+        return $this->view->render('User/profile.twig', [
             'user' => UserModel::getById((int)$_GET['id'])
         ]);
 
@@ -101,5 +106,39 @@ class User extends AbstractController
 
         $this->redirect('/user/login');
 
+    }
+
+    public function deleteUserAction()
+    {
+        $id = ($_POST['id']);
+        $user = (new UserModel())->setId($id);
+        $user->delete();
+        $this->redirect('/posts/index');
+
+        return $this->view->render('Blog/blog.twig', [
+            'user' => $this->user,
+        ]);
+    }
+
+    public function updateUserAction()
+    {
+        $id = ($_POST['id']);
+        $name = ($_POST['name']);
+        $email = ($_POST['email']);
+        $password = ($_POST['password']);
+
+        $user = UserModel::getById($id);
+
+        $user->name = $name;
+        $user->email = $email;
+        $user->password = UserModel::getPasswordHash($password);
+
+        $user->updates($user->id,$user->name,$user->email,$user->password);
+
+        $this->redirect('/posts/index');
+
+        return $this->view->render('Blog/blog.twig', [
+            'user' => $this->user,
+        ]);
     }
 }

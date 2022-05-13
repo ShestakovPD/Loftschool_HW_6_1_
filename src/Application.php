@@ -59,11 +59,12 @@ class Application
         $this->route->addRoute('/', User::class, 'login');
         ///** @uses \App\Controller\User::registerAction() */
         $this->route->addRoute('/user/register', User::class, 'register');
+        $this->route->addRoute('/posts/updateUser', User::class, 'updateUser');
         ///** @uses \App\Controller\Blog::indexAction() */
-        $this->route->addRoute('/blog', \App\Controller\Blog::class, 'index');
-        $this->route->addRoute('/blog/index', \App\Controller\Blog::class, 'index');
-        $this->route->addRoute('/blog/AllPosts', \App\Controller\Blog::class, 'AllPosts');
-        $this->route->addRoute('/pre', \App\Controller\Blog::class, 'image');
+        $this->route->addRoute('/posts', \App\Controller\Posts::class, 'index');
+        $this->route->addRoute('/posts/index', \App\Controller\Posts::class, 'index');
+        $this->route->addRoute('/posts/allPosts', \App\Controller\Posts::class, 'AllPosts');
+        $this->route->addRoute('/pre', \App\Controller\Posts::class, 'image');
         /*Db\getLogHTML();*/
     }
 
