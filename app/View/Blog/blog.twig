@@ -1,0 +1,93 @@
+TWIG
+
+Это Ваш блог {{ user.getName() }}<br>
+Ваш номер ID # {{ user.getId() }}
+<br>
+<br>
+<form enctype="multipart/form-data" action="/blog/sendPost" method="post">
+    Message:<br>
+    <textarea name="message" style="width: 250px; height: 100px;"></textarea><br>
+    Прикрепить картинку:<br>
+    <input name="userfile" type="file" value=""><br>
+    <input type="submit" value="Send">
+</form>
+
+<form action="/user/logout">
+    <input type="submit" value="Выйти">
+</form>
+
+{% for post, val in posts %}
+
+<div class="post">
+<span class="user">Сообщение от пользователя
+
+            <b> {{ posts_name[val.user_id].name }} </b>
+        	с ID_#      {{ val.user_id }}
+            отправлено  {{ val.createdAt }}<br>
+
+                        {% set fileId=val.id %}
+           <img src="'/images/'.{{ fileId }}.'.png'"></img>
+
+    <div class="message">{{ val.texts }}</div>
+
+    {% if user.getId() == ADMIN %}
+        <form method="post" action="/blog/deletePost">
+        <input type='hidden' name='id' value="{{ fileId }}">
+        <input type="submit" value="Удалить">
+        </form>
+    {% endif %}
+
+</span>
+</div>
+{%  endfor %}
+
+<form action="/blog/api" method="post">
+    Введите ID юзера для просмотра его постов:<br>
+    <input type="number" name="user_id_api"> <br>
+</form>
+
+{% if post.user_id_api is defined and post.user_id_api is not empty %}
+
+        {% for post, val in posts_user_id %}
+
+        <div class="post">
+        <span class="user">Сообщение от пользователя
+
+                    <b> {{ posts_name[val.user_id].name }} </b>
+                    с ID_#      {{ val.user_id }}
+                    отправлено  {{ val.createdAt }}<br>
+
+                                {% set fileId=val.id %}
+                   <img src="'/images/'.{{ fileId }}.'.png'"></img>
+
+            <div class="message">{{ val.texts }}</div>
+
+        </span>
+        </div>
+        {% endfor %}
+
+{% endif %}
+
+<pre>
+В JSON формате: {{ posts_user_id|json_encode() }}
+</pre>
+
+
+<img src="/images/23.jpg"></img>
+
+<style>
+    .post {
+        border: 1px solid grey;
+        margin-top: 10px;
+        padding: 5px;
+        width: 250px;
+    }
+    .user {
+        color: grey;
+        font-size: 11px;
+    }
+    .message {
+        margin-top: 5px;
+        padding-left: 5px;
+    }
+</style>

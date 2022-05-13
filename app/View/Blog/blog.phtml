@@ -1,0 +1,102 @@
+TWIG phtml
+
+Это Ваш блог {{ user.getName() }}<br>
+Ваш номер ID # {{ user.getId() }}
+<br>
+<br>
+<form enctype="multipart/form-data" action="/blog/sendPost" method="post">
+    Message:<br>
+    <textarea name="message" style="width: 250px; height: 100px;"></textarea><br>
+    Прикрепить картинку:<br>
+    <input name="userfile" type="file" value=""><br>
+    <input type="submit" value="Send">
+</form>
+
+
+/*$posts=App\Model\Blog::getAll();*/
+/*  Base\Db\getLogHTML();*/
+
+
+<?php
+$posts=$this->posts;
+var_dump($this->posts);
+?><br><?
+?><br><?
+$users=$this->user;
+var_dump($users);
+?><br><?
+?><br><?
+?>
+
+<?
+$this->getNamePostSender->name;
+var_dump($getNamePostSender);
+
+?>
+
+<form action="/user/logout">
+    <input type="submit" value="Выйти">
+</form>
+
+<? foreach ($posts as $post => $val): ?>
+    <div class="post">
+        <span class="user">Сообщение от пользователя 
+
+        <?=
+        var_dump($getNamePostSender);
+         ?>
+
+         <b><?=strip_tags($getNamePostSender[$val['user_id']]['name']);?></b> 
+
+        	с ID_#      <?=$val['user_id']?>  
+        	отправлено  <?=$val['createdAt'];?></span>
+
+
+        <? $url = 'images/'. $val['id'] . '.png';
+
+        if (file_exists('images/'. $val['id'] . '.png')):
+          
+        ?>
+
+        <img src="<?$url;?>/?id=<?=$val['id'];?>"></img>
+               <!-- <img src="/images/23.png"></img> -->
+               <img src="'/images/'.$fileId.'.png'"></img>
+               <img src="/images/'.$fileId.'.png'/?id=<?=$val['id'];?>"></img>
+
+        <? endif; ?>
+
+        <div class="message"><?=$val['texts'];?></div>
+        <form method="post" action="/blog/deletePost">
+
+            <input type='hidden' name='id' value="<?=$fileId;?>">
+            <input type="submit" value="Удалить">
+
+            <?$fileId=$val['id'];?>
+           <?var_dump($fileId);?>
+           <img src="/images/$FileId.'.png'"></img>
+           <img src="'../../../images'.$fileId.'.png'"></img>
+
+        </form>
+    </div>
+<? endforeach;?>
+
+<?$fileId="23";?>
+<img src="'../../../../images'.$fileId.'.png'"></img>
+<img src="/images/23.png"></img>
+
+<style>
+    .post {
+        border: 1px solid grey;
+        margin-top: 10px;
+        padding: 5px;
+        width: 250px;
+    }
+    .user {
+        color: grey;
+        font-size: 11px;
+    }
+    .message {
+        margin-top: 5px;
+        padding-left: 5px;
+    }
+</style>
