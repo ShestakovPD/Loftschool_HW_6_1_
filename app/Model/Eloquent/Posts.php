@@ -1,28 +1,25 @@
 <?php
 
-namespace App\Model;
+namespace App\Model\Eloquent;
 
-use Base\AbstractModel;
-use Base\Db;
+use Illuminate\Database\Eloquent\Model;
+use App\Model\Eloquent\User as UserModel;
+use App\Model\Eloquent\Posts as PostsModel;
 
-class Posts extends AbstractModel
+/**
+ * @property-read $id
+ * @property-read $user_id
+ * @property-read $texts
+ */
+
+class Posts extends Model
 {
-    protected $table = "posts";
-
-    private $id;
-    private $user_id;
-    private $texts;
-  /*  private $createdAt;*/
-
-    public function __construct($data = [])
-    {
-        if ($data) {
-            $this->id = $data['id'];
-            $this->user_id = $data['user_id'];
-            $this->texts = $data['texts'];
-            /*$this->createdAt = $data['created_at'];*/
-        }
-    }
+    protected $table = 'posts';
+    protected $fillable = [
+        'id',
+        'user_id',
+        'texts',
+        ];
 
     /**
      * @return mixed
@@ -74,34 +71,34 @@ class Posts extends AbstractModel
      */
     public function getCreatedAt(): string
     {
-        return $this->createdAt;
+        return $this->created_at;
     }
 
     /**
-     * @param mixed $createdAt
+     * @param mixed $created_at
      */
-/*    public static function setCreatedAt(string $createdAt): self
+/*    public static function setCreatedAt(string $created_at): self
     {
-        $this->createdAt = $createdAt;
+        $this->created_at = $created_at;
         return $this;
     }*/
 
     public static function getAll()
     {
-        $db = Db::getInstance();
+        return self::query()->limit(10)->offset(0)->orderBy('id','DESC')->get();
+
+    /*    $db = Db::getInstance();
         $select = "SELECT * FROM posts ORDER BY id DESC LIMIT 20;";
         $data = $db->fetchAll($select, __METHOD__, [
             ]
         );
-
         if (!$data) {
             return null;
         }
-
-        return $data;
+        return $data;*/
     }
 
-    public function save()
+/*    public function save()
     {
         $db = Db::getInstance();
         $insert = "INSERT INTO posts (`user_id`, `texts`) VALUES (
@@ -109,37 +106,42 @@ class Posts extends AbstractModel
         $db->exec($insert, __METHOD__, [
             ':user_id' => $this->user_id,
             ':texts' => $this->texts
-            /*':createdAt' => $this->createdAt*/
+            ':createdAt' => $this->createdAt
         ]);
 
         $id = $db->lastInsertId();
         $this->id = $id;
 
         return $id;
-    }
+    }*/
 
     public function delete()
     {
-        $db = Db::getInstance();
+        return self::where('id',$this->id)->delete();
+        /* $db = PostsModel::where('id',$this->id)->delete();*/
+
+     /*   $db = Db::getInstance();
         $delete = "DELETE FROM posts WHERE `id` = :id";
         $db->exec($delete, __METHOD__, [
             ':id' => $this->id,
-        ]);
+        ]);*/
 
-        $id = $db->lastInsertId();
-        $this->id = $id;
+      /*  $id=$this->id;
 
-        return $id;
+        return $id;*/
     }
 
     public static function getAllById(int $user_id)
     {
-        $db = Db::getInstance();
+        $data = PostsModel::where('id','=',$user_id)->get();
+
+   /*     $db = Db::getInstance();
         $select = "SELECT * FROM posts WHERE `user_id` = :user_id;";
         $data = $db->fetchAll($select, __METHOD__, [
                 ':user_id' => $user_id,
             ]
         );
+*/
 
         if (!$data) {
             return null;
@@ -180,19 +182,24 @@ class Posts extends AbstractModel
     public static function getNamePostSender()
     {
 
-        $db = Db::getInstance();
-        $select = "SELECT * FROM posts";
-        $data1 = $db->fetchAll($select, __METHOD__, []);
+        $db = PostsModel::all()->toArray();
 
+     /*   $db = Db::getInstance();
+        $select = "SELECT * FROM posts";
+        $data1 = $db->fetchAll($select, __METHOD__, []);*/
+
+        $data1 = $db;
         $postUserIds = array_column($data1, 'user_id');
         $userIdsStr = implode(',', array_unique($postUserIds));
 
-        $db = Db::getInstance();
+        $db = UserModel::where('id',$userIdsStr)->get()->toArray();
+
+       /* $db = Db::getInstance();
         $select = "SELECT * FROM users WHERE id IN ($userIdsStr)";
-        $data2 = $db->fetchAll($select, __METHOD__, []);
+        $data2 = $db->fetchAll($select, __METHOD__, []);*/
 
+        $data2 = $db;
         $usersById = array_combine(array_column($data2, 'id'), $data2);
-
 
         if (!$data1) {
             return null;

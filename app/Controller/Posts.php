@@ -2,10 +2,10 @@
 
 namespace App\Controller;
 
-use App\Model\Posts as PostsModel;
-use App\Model\User as UserModel;
+use App\Model\Eloquent\Posts as PostsModel;
+use App\Model\Eloquent\User as UserModel;
 use Base\AbstractController;
-use Base\Db;
+/*use Base\Db;*/
 use Intervention\Image\ImageManagerStatic as Image;
 
 class Posts extends AbstractController
@@ -17,14 +17,14 @@ class Posts extends AbstractController
 
     protected static $_imagePath;
 
-    public static function create_article ($text, $user_id) {
+/*    public static function create_article ($text, $user_id) {
         $arr = array(
             "texts" => $texts,
             'user_id' => $user_id
         );
         $post = Posts::create($arr);
         return $posts;
-    }
+    }*/
 
     public function indexAction()
     {
@@ -60,7 +60,7 @@ class Posts extends AbstractController
     {
         $message = htmlspecialchars(trim($_POST['message']));
         $user_id = $_SESSION['id'];
-        $createdAt = date("Y-m-d H:i:s");
+        $created_at = date("Y-m-d H:i:s");
 
         $success = true;
         if (isset($_POST['message'])) {
@@ -71,7 +71,7 @@ class Posts extends AbstractController
             }
 
             if ($success) {
-                $blogs = (new PostsModel())->setUserId($user_id)->setText($message)/*->setCreatedAt($createdAt)*/;
+                $blogs = (new PostsModel())->setUserId($user_id)->setText($message)->setCreatedAt($created_at);
 
                 $blogs->save();
 

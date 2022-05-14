@@ -2,9 +2,9 @@
 
 namespace App\Controller;
 
-use App\Model\User as UserModel;
+use App\Model\Eloquent\User as UserModel;
 use Base\AbstractController;
-use Base\Db;
+/*use Base\Db;*/
 use Base\View;
 
 class User extends AbstractController
@@ -20,13 +20,14 @@ class User extends AbstractController
         if ($name) {
             $password = $_POST['password'];
             $user = UserModel::getByName($name);
+
             if (!$user) {
-                $this->view->assign('error', 'Неверный логин и пароль');
+                $this->view->assign('error', 'Неверный логин и пароль 1');
             }
 
             if ($user) {
                 if ($user->getPassword() != UserModel::getPasswordHash($password)) {
-                    $this->view->assign('error', 'Неверный логин и пароль');
+                    $this->view->assign('error', 'Неверный логин и пароль 2 ');
                 } else {
                     $_SESSION['id'] = $user->getId();
                     $this->redirect('/posts/index');
@@ -46,6 +47,7 @@ class User extends AbstractController
         $gender = UserModel::GENDER_MALE;
         $password = trim($_POST['password']);
         $password_r = trim($_POST['password_r']);
+        $created_at = date("Y-m-d H:i:s");
 
 
         $success = true;
@@ -78,7 +80,7 @@ class User extends AbstractController
             }
 
             if ($success) {
-                $user = (new UserModel())->setName($name)->setEmail($email)->setGender($gender)->setPassword(UserModel::getPasswordHash($password));
+                $user = (new UserModel())->setName($name)->setEmail($email)->setGender($gender)->setCreatedAt($created_at)->setPassword(UserModel::getPasswordHash($password));
 
                 $user->save();
 

@@ -45,7 +45,7 @@ class Application
     {
         $id = $_SESSION['id'] ?? null;
         if ($id) {
-            $user = \App\Model\User::getById($id);
+            $user = \App\Model\Eloquent\User::getById($id);
             if ($user) {
                 $this->controller->setUser($user);
             }

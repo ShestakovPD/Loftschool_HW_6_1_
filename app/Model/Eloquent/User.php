@@ -1,36 +1,31 @@
 <?php
 
-namespace App\Model;
+namespace App\Model\Eloquent;
 
-use Base\AbstractModel;
-use Base\Db;
 use Illuminate\Database\Eloquent\Model;
 
-class User extends AbstractModel
+/**
+ * @property-read $id
+ * @property-read $name
+ * @property-read $email
+ * @property-read $password
+ * @property-read $created_at
+ * @property-read $gender
+ */
+
+class User extends Model
 {
     const GENDER_FEMALE = 2;
     const GENDER_MALE = 1;
 
-    public $table = "users";
-
-    public $id;
-    public $name;
-    public $email;
-    public $password;
-    public $createdAt;
-    public $gender;
-
-    public function __construct($data = [])
-    {
-        if ($data) {
-            $this->id = $data['id'];
-            $this->name = $data['name'];
-            $this->email = $data['email'];
-            $this->password = $data['password'];
-            $this->gender = $data['gender'];
-            $this->createdAt = $data['created_at'];
-        }
-    }
+    protected $table = 'users';
+    protected $fillable = [
+        'id',
+        'name',
+        'email',
+        'password',
+        'created_at',
+        'gender'];
 
     public function getName(): string
     {
@@ -97,14 +92,14 @@ class User extends AbstractModel
     }
 
     /**
-     * @param mixed $createdAt
+     * @param mixed $created_at
      */
-    public function setCreatedAt(string $createdAt): self
+ /*   public function setCreatedAt(string $created_at): self
     {
-        $this->createdAt = $createdAt;
+        $this->created_at = $created_at;
         return $this;
     }
-
+*/
     /**
      * @return mixed
      */
@@ -130,7 +125,7 @@ class User extends AbstractModel
         return $this;
     }
 
-    public function save()
+/*    public function save()
     {
 
         $db = Db::getInstance();
@@ -148,11 +143,13 @@ class User extends AbstractModel
         $this->id = $id;
 
         return $id;
-    }
+    }*/
 
     public function delete()
     {
-        $db = Db::getInstance();
+        return self::where('id',$this->id)->delete();
+
+   /*     $db = Db::getInstance();
         $delete = "DELETE FROM users WHERE `id` = :id";
         $db->exec($delete, __METHOD__, [
             ':id' => $this->id,
@@ -161,12 +158,14 @@ class User extends AbstractModel
         $id = $db->lastInsertId();
         $this->id = $id;
 
-        return $id;
+        return $id;*/
     }
 
     public function updates($id,$name, $email, $password)
     {
-        $this->id = $id;
+        return self::where('id',$this->id)->updateOrInsert(['name' => $this->name, 'email' => $this->email,'password' => $this->password,'gender'=> 1]);
+
+        /*$this->id = $id;
         $this->name = $name;
         $this->email = $email;
         $this->password = $password;
@@ -184,25 +183,29 @@ class User extends AbstractModel
         $id = $db->lastInsertId();
         $this->id = $id;
 
-        return $id;
+        return $id;*/
     }
 
     public static function getById(int $id): ?self
     {
-        $db = Db::getInstance();
+        return self::query()->find($id);
+
+   /*     $db = Db::getInstance();
         $select = "SELECT * FROM users WHERE id = $id";
         $data = $db->fetchOne($select, __METHOD__);
-
         if (!$data) {
             return null;
         }
-
-        return new self($data);
+        return new self($data);*/
     }
 
     public static function getByName(string $name): ?self
     {
-        $db = Db::getInstance();
+        return self::query()->where('name','=',$name)->first();
+       /* return self::query()->find($name)->get();*/
+
+
+  /*      $db = Db::getInstance();
         $select = "SELECT * FROM users WHERE `name` = :name";
         $data = $db->fetchOne($select, __METHOD__, [
             ':name' => $name
@@ -212,7 +215,7 @@ class User extends AbstractModel
             return null;
         }
 
-        return new self($data);
+        return new self($data);*/
     }
 
     public static function getPasswordHash(string $password)
@@ -222,17 +225,14 @@ class User extends AbstractModel
 
     public static function getAll()
     {
-        $db = Db::getInstance();
+        return self::query()->limit(10)->offset(0)->orderBy('id','DESC')->get();
+       /* $db = Db::getInstance();
         $select = "SELECT * FROM users ORDER BY id DESC LIMIT 5;";
-        $data = $db->fetchAll($select, __METHOD__, [
-            ]
-        );
-
+        $data = $db->fetchAll($select, __METHOD__, []);
         if (!$data) {
             return null;
         }
-
-        return $data;
+        return $data;*/
     }
 
 }

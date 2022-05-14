@@ -1,7 +1,8 @@
 {
   "require": {
     "twig/twig":"^2.9.0",
-    "intervention/image":"dev-master"
+    "intervention/image":"dev-master",
+    "illuminate/database": "^8.83"
   },
 
   "autoload": {
